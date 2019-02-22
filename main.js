@@ -1,3 +1,19 @@
+//Create a new component for product-details with a prop of details.
+
+Vue.component('product-details', {
+	props: {
+		details: {
+			type: Array,
+			required: true
+		}
+	},
+	template: `
+    <ul>
+      <li v-for="detail in details">{{ detail }}</li>
+    </ul>
+  `
+});
+
 Vue.component('product', {
 	props: {
 		premium: {
@@ -18,30 +34,28 @@ Vue.component('product', {
 			<p v-else :class="{ outOfStock: !inStock }">Out of Stock</p>
 			<p>Shipping: {{ shipping }}</p>
 
-		<ul>
-			<li v-for="detail in details">{{ detail }}</li>
-		</ul>
+			<product-details :details="details"></product-details>
 
-		<div v-for="(variant, index) in variants"
-			class="color-box"
-			:key="variant.variantId"
-			:style="{ backgroundColor: variant.variantColor }"
-			@mouseover="updateProduct(index)">
-		</div>
+			<div v-for="(variant, index) in variants"
+				class="color-box"
+				:key="variant.variantId"
+				:style="{ backgroundColor: variant.variantColor }"
+				@mouseover="updateProduct(index)">
+			</div>
 		
-		<button v-on:click="addToCart" 
-			:disabled="!inStock"
-			:class="{ disabledButton: !inStock }">
-			Add to cart
-		</button>
+			<button v-on:click="addToCart" 
+				:disabled="!inStock"
+				:class="{ disabledButton: !inStock }">
+				Add to cart
+			</button>
 
-		<div class="cart">
-			<p>Cart({{ cart }})</p>
+			<div class="cart">
+				<p>Cart({{ cart }})</p>
+			</div>
+
 		</div>
 
 		</div>
-
-	</div>
 	`,
 	data() {
 		return {
