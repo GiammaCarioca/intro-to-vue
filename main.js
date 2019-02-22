@@ -1,9 +1,11 @@
+//When inStock is false, bind a class to the “Out of Stock” p tag that adds  text-decoration: line-through to that element.
+
 var app = new Vue({
 	el: '#app',
 	data: {
 		product: 'Socks',
 		image: './assets/vmSocks-green.jpg',
-		inStock: true,
+		inStock: false,
 		details: ['80% cotton', '20% polyester', 'Gender-neutral'],
 		variants: [
 			{
