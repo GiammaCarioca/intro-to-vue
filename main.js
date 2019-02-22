@@ -1,5 +1,3 @@
-//Create a new button and method to decrement the value of `cart`.
-
 var app = new Vue({
 	el: '#app',
 	data: {
@@ -27,9 +25,6 @@ var app = new Vue({
 		},
 		updateProduct(variantImage) {
 			this.image = variantImage;
-		},
-		removeFromCart() {
-			this.cart -= 1;
 		}
 	}
 });
