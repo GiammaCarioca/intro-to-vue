@@ -1,5 +1,3 @@
-//Add an array of sizes to the data and use v-for to display them in a list.
-
 var app = new Vue({
 	el: '#app',
 	data: {
@@ -17,6 +15,6 @@ var app = new Vue({
 				variantColor: 'blue'
 			}
 		],
-		sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL']
+		cart: 0
 	}
 });
