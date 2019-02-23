@@ -1,3 +1,5 @@
+//Add a question to the form: “Would you recommend this product”. Then take in that response from the user via radio buttons of “yes” or “no” and add it to the productReview object, with form validation.
+
 Vue.component('product', {
 	props: {
 		premium: {
@@ -40,8 +42,8 @@ Vue.component('product', {
 			<div>
 				<h2>Reviews</h2>
 				<p v-if="!reviews.length">There are no reviews yet.</p>
-				<ul>
-					<li v-for="review in reviews">
+				<ul v-else>
+					<li v-for="(review, index) in reviews" :key="index">
 					<p>{{ review.name }}</p>
 					<p>Rating: {{ review.rating }}</p>
 					<p>{{ review.review }}</p>
@@ -109,6 +111,13 @@ Vue.component('product', {
 Vue.component('product-review', {
 	template: `
 		<form class="review-form" @submit.prevent="onSubmit">
+		
+			<p class="error" v-if="errors.length">
+				<b>Please correct the following error(s):</b>
+				<ul>
+					<li v-for="error in errors">{{ error }}</li>
+				</ul>
+			</p>
 
 			<p>
 				<label for="name">Name:</label>
@@ -117,7 +126,7 @@ Vue.component('product-review', {
 			
 			<p>
 				<label for="review">Review:</label>      
-				<textarea id="review" v-model="review" required></textarea>
+				<textarea id="review" v-model="review"></textarea>
 			</p>
 			
 			<p>
@@ -130,6 +139,16 @@ Vue.component('product-review', {
 					<option>1</option>
 				</select>
 			</p>
+
+			<p>Would you recommend this product?</p>
+        <label>
+          Yes
+          <input type="radio" value="Yes" v-model="recommend"/>
+        </label>
+        <label>
+          No
+          <input type="radio" value="No" v-model="recommend"/>
+        </label>
 					
 			<p>
 				<input type="submit" value="Submit">  
@@ -141,20 +160,31 @@ Vue.component('product-review', {
 		return {
 			name: null,
 			review: null,
-			rating: null
+			rating: null,
+			recommend: null,
+			errors: []
 		};
 	},
 	methods: {
 		onSubmit() {
-			let productReview = {
-				name: this.name,
-				review: this.review,
-				rating: this.rating
-			};
-			this.$emit('review-submitted', productReview);
-			this.name = null;
-			this.review = null;
-			this.rating = null;
+			if (this.name && this.review && this.rating && this.recommend) {
+				let productReview = {
+					name: this.name,
+					review: this.review,
+					rating: this.rating,
+					recommend: this.recommend
+				};
+				this.$emit('review-submitted', productReview);
+				this.name = null;
+				this.review = null;
+				this.rating = null;
+				this.recommend = null;
+			} else {
+				if (!this.name) this.errors.push('Name required.');
+				if (!this.review) this.errors.push('Review required.');
+				if (!this.rating) this.errors.push('Rating required.');
+				if (!this.recommend) this.errors.push('Recommendation required.');
+			}
 		}
 	}
 });
