@@ -1,5 +1,3 @@
-//Add a button that removes the product from the cart array by emitting an event with the id of the product to be removed.
-
 Vue.component('product', {
 	props: {
 		premium: {
@@ -37,16 +35,28 @@ Vue.component('product', {
 					Add to cart
 				</button>
 
-				<button @click="removeFromCart">Remove from cart</button>
-
 			</div>
+
+			<div>
+				<h2>Reviews</h2>
+				<p v-if="!reviews.length">There are no reviews yet.</p>
+				<ul>
+					<li v-for="review in reviews">
+					<p>{{ review.name }}</p>
+					<p>Rating: {{ review.rating }}</p>
+					<p>{{ review.review }}</p>
+					</li>
+				</ul>
+			</div>
+
+			<product-review @review-submitted="addReview"></product-review>
 
 		</div>
 	`,
 	data() {
 		return {
-			brand: 'Vue Mastery',
 			product: 'Socks',
+			brand: 'Vue Mastery',
 			selectedVariant: 0,
 			details: ['80% cotton', '20% polyester', 'Gender-neutral'],
 			variants: [
@@ -62,7 +72,8 @@ Vue.component('product', {
 					variantImage: './assets/vmSocks-blue.jpg',
 					variantQuantity: 0
 				}
-			]
+			],
+			reviews: []
 		};
 	},
 	methods: {
@@ -72,8 +83,8 @@ Vue.component('product', {
 		updateProduct(index) {
 			this.selectedVariant = index;
 		},
-		removeFromCart: function() {
-			this.$emit('remove-from-cart', this.variants[this.selectedVariant].variantId);
+		addReview(productReview) {
+			this.reviews.push(productReview);
 		}
 	},
 	computed: {
@@ -95,6 +106,73 @@ Vue.component('product', {
 	}
 });
 
+Vue.component('product-review', {
+	template: `
+		<form class="review-form" @submit.prevent="onSubmit">
+		
+			<p class="error" v-if="errors.length">
+				<b>Please correct the following error(s):</b>
+				<ul>
+					<li v-for="error in errors">{{ error }}</li>
+				</ul>
+			</p>
+
+			<p>
+				<label for="name">Name:</label>
+				<input id="name" v-model="name">
+			</p>
+			
+			<p>
+				<label for="review">Review:</label>      
+				<textarea id="review" v-model="review"></textarea>
+			</p>
+			
+			<p>
+				<label for="rating">Rating:</label>
+				<select id="rating" v-model.number="rating">
+					<option>5</option>
+					<option>4</option>
+					<option>3</option>
+					<option>2</option>
+					<option>1</option>
+				</select>
+			</p>
+					
+			<p>
+				<input type="submit" value="Submit">  
+			</p>    
+		
+	</form>
+	`,
+	data() {
+		return {
+			name: null,
+			review: null,
+			rating: null,
+			errors: []
+		};
+	},
+	methods: {
+		onSubmit() {
+			if (this.name && this.review && this.rating) {
+				let productReview = {
+					name: this.name,
+					review: this.review,
+					rating: this.rating
+				};
+				this.$emit('review-submitted', productReview);
+				this.name = null;
+				this.review = null;
+				this.rating = null;
+			} else {
+				if (!this.name) this.errors.push('Name required.');
+				if (!this.review) this.errors.push('Review required.');
+				if (!this.rating) this.errors.push('Rating required.');
+			}
+		}
+	}
+});
+
 var app = new Vue({
 	el: '#app',
 	data: {
@@ -104,13 +182,6 @@ var app = new Vue({
 	methods: {
 		updateCart(id) {
 			this.cart.push(id);
-		},
-		removeItem(id) {
-			for (var i = this.cart.length - 1; i >= 0; i--) {
-				if (this.cart[i] === id) {
-					this.cart.splice(i, 1);
-				}
-			}
 		}
 	}
 });
